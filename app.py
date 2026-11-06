@@ -1,13 +1,27 @@
-from flask_cors import CORS
+import os
 from datetime import datetime
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
+from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app, origins=["http://127.0.0.1:5500", "http://localhost:5500"])
 
-# In-memory storage: lost when the server stops
+# Settings come from environment variables, with safe defaults for local use
+allowed = os.environ.get(
+    "ALLOWED_ORIGINS",
+    "http://127.0.0.1:5500,http://localhost:5500"
+)
+CORS(app, origins=[o.strip() for o in allowed.split(",") if o.strip()])
+
+FRONTEND_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "frontend")
+
+# In-memory storage: lost when the server stops or restarts
 egg_records = []
+
+
+@app.route("/")
+def home():
+    return send_from_directory(FRONTEND_DIR, "index.html")
 
 
 @app.route("/api/health", methods=["GET"])
@@ -42,6 +56,7 @@ def add_egg_record():
 
     return jsonify({"message": "Record saved", "record": record}), 201
 
+
 @app.route("/api/eggs", methods=["GET"])
 def get_egg_records():
     total = sum(record["count"] for record in egg_records)
@@ -54,4 +69,4 @@ def get_egg_records():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=os.environ.get("FLASK_DEBUG") == "1")
