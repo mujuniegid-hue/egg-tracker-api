@@ -13,15 +13,28 @@ WhatsApp tallying.
 
 ## Setup
 
+Requires Python 3.
+
 ```bash
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
+```
+
+Terminal 1, the API:
+
+```bash
 python app.py
 ```
 
-The server runs at http://127.0.0.1:5000
+Terminal 2, the web page:
 
+```bash
+cd frontend
+python -m http.server 5500
+```
+
+Open http://127.0.0.1:5500 in your browser.
 ## Example: log a record
 
 ```bash
@@ -62,6 +75,36 @@ is not in YYYY-MM-DD format.
 
 Data is stored in memory and is lost when the server restarts.
 A database is the next step.
+
+## Who could use this tool (Kenya)
+
+The tool logs a number per place or person each day and shows a running
+total. Any small business that records daily figures and adds them up
+by hand can use the same pattern:
+
+| Business type | What they log daily |
+|---|---|
+| Poultry and egg farmers | Eggs per shed |
+| Dairy farmers and milk collection groups | Litres per cow or farmer |
+| Small shops and kiosks | Daily sales and stock counts |
+| Salons and barbershops | Customers served and takings |
+| Boda boda and matatu owners | Daily collection per vehicle |
+| Fish farmers | Fish harvested per pond |
+| School canteens and eateries | Meals sold and takings |
+
+## Price points (estimates, to be confirmed with local market research)
+
+| Tier | Includes | One-time (KES) | Monthly (KES) |
+|---|---|---|---|
+| Basic | API and web page deployed online, one business, training | 15,000 to 25,000 | 1,500 to 3,000 |
+| Standard | Basic plus database, login, totals per shed or per week | 35,000 to 60,000 | 3,000 to 6,000 |
+
+How I arrived at these: estimated hours multiplied by an hourly rate,
+plus the monthly hosting cost and support time. Larger operations with
+several sites pay more because accurate totals are worth more to them.
+
+The current version is a prototype with in-memory storage and no login.
+A database and login are required before it is client-ready.
 
 ## Pricing (to build, deploy and maintain for a poultry farmer)
 

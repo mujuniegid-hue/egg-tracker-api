@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Egg Tracker</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
+    label { display: block; margin-bottom: 0.75rem; }
+    input { display: block; width: 100%; padding: 0.4rem; margin-top: 0.25rem; box-sizing: border-box; }
+    button { padding: 0.5rem 1.2rem; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+    th, td { border: 1px solid #ccc; padding: 0.4rem; text-align: left; }
+    #message { color: #b00020; }
+  </style>
+</head>
+<body>
+  <h1>Egg Production Tracker</h1>
+
+  <form id="egg-form">
+    <label>Shed name
+      <input type="text" id="shed" required>
+    </label>
+    <label>Date
+      <input type="date" id="date" required>
+    </label>
+    <label>Egg count
+      <input type="number" id="count" min="0" step="1" required>
+    </label>
+    <button type="submit">Submit</button>
+  </form>
+
+  <p id="message"></p>
+
+  <h2>Total eggs: <span id="total">0</span></h2>
+
+  <table>
+    <thead>
+      <tr><th>Shed</th><th>Date</th><th>Count</th></tr>
+    </thead>
+    <tbody id="records-body"></tbody>
+  </table>
+
+  <script>
+    const API_URL = "http://127.0.0.1:5000/api/eggs";
+
+const form = document.getElementById("egg-form");
+const shedInput = document.getElementById("shed");
+const dateInput = document.getElementById("date");
+const countInput = document.getElementById("count");
+const messageEl = document.getElementById("message");
+const totalEl = document.getElementById("total");
+const tableBody = document.getElementById("records-body");
+
+function showMessage(text, isError) {
+  messageEl.textContent = text;
+  messageEl.style.color = isError ? "#b00020" : "#1b6e2d";
+}
+
+async function loadRecords() {
+  const response = await fetch(API_URL);
+  const data = await response.json();
+
+  totalEl.textContent = data.total_eggs;
+  tableBody.replaceChildren();
+
+  data.records.forEach(function (record) {
+    const row = document.createElement("tr");
+
+    [record.shed, record.date, record.count].forEach(function (value) {
+      const cell = document.createElement("td");
+      cell.textContent = value;
+      row.appendChild(cell);
+    });
+
+    tableBody.appendChild(row);
+  });
+}
+
+form.addEventListener("submit", async function (event) {
+  event.preventDefault();
+
+  const record = {
+    shed: shedInput.value.trim(),
+    date: dateInput.value,
+    count: Number(countInput.value)
+  };
+
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(record)
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      showMessage(result.error, true);
+      return;
+    }
+
+    await loadRecords();
+    showMessage("Saved: " + record.shed + ", " + record.count + " eggs", false);
+    shedInput.value = "";
+    countInput.value = "";
+    shedInput.focus();
+  } catch (error) {
+    showMessage("Could not reach the server. Is it running?", true);
+    console.error(error);
+  }
+});
+
+loadRecords().catch(function () {
+  showMessage("Could not reach the server. Is it running?", true);
+});
+  </script>
+</body>
+</html>

@@ -1,8 +1,10 @@
+from flask_cors import CORS
 from datetime import datetime
 
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
+CORS(app, origins=["http://127.0.0.1:5500", "http://localhost:5500"])
 
 # In-memory storage: lost when the server stops
 egg_records = []
