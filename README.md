@@ -108,7 +108,7 @@ A database and login are required before it is client-ready.
 
 ## Pricing (to build, deploy and maintain for a poultry farmer)
 
-**One-time build and deployment: UGX 000,000**
+**One-time build and deployment: UGX 1,000,000**
 Includes: custom API for the farmer's sheds, deployment online,
 setup, testing, and a short training session.
 
