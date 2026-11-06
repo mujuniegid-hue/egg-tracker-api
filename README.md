@@ -6,6 +6,19 @@ A small web tool that lets a poultry farmer log daily egg production per shed an
 ![Egg tracker page](screenshot.png)
 -->
 
+## Live Demo
+
+**Live URL:** https://egg-tracker-api.onrender.com
+
+- Open the link to use the tracker in your browser.
+- API health check: https://egg-tracker-api.onrender.com/api/health
+- API endpoint: `GET` and `POST` https://egg-tracker-api.onrender.com/api/eggs
+
+Note: this demo runs on Render's free plan. The service goes to sleep after
+15 minutes without visitors, so the first load can be slow. Records are kept
+in memory, so they are cleared when the service sleeps or restarts. A database
+is the next step before using it with a real client.
+
 ## Problem and solution
 
 A poultry farmer in Kasese has three sheds. Each day he sends himself egg counts on WhatsApp, and every Saturday he adds them up by hand. This is slow, and one wrong number ruins the total.
@@ -158,6 +171,16 @@ POST returns status `400` with a message in the form `{"error": "..."}` when:
 | Shed B | 2026-11-03 | 100 | 425 |
 
 The table and total update after each submit without a page reload. Typing only spaces in the shed box should produce a red error message and no new row.
+## Environment variables
+
+| Variable | Purpose | Example |
+|---|---|---|
+| `PYTHON_VERSION` | Python version used on Render | `3.14.3` |
+| `FLASK_DEBUG` | `1` turns on debug mode locally; keep `0` in production | `0` |
+| `ALLOWED_ORIGINS` | Comma-separated list of origins allowed by CORS | `https://egg-tracker-api.onrender.com |
+
+No secrets are used yet. When a database or login is added, passwords and keys
+belong in environment variables, never in GitHub.
 
 ## CORS
 
